@@ -1,6 +1,6 @@
 #include "includes.h"
 int Flag=0,wait=9;
-signed int steer=0;
+signed int steer=0,delay_count=0;
 
 
 
@@ -8,7 +8,6 @@ signed int steer=0;
 void main(void)
  {
 	initALL();
-	
 	while(wait>0);
 	Set_Middlepoint();
 	for (;;) 
@@ -22,8 +21,10 @@ void main(void)
 				steer=1470;
 			if(steer>=1896)
 				steer=1919;
-		    SET_steer(steer);
-			Dis_Num(64,3,(WORD)steer,5);
+		    Dis_Num(64,3,(WORD)steer,5);
+			if(Up_Flag==1)
+				steer=STEER_HELM_CENTER;
+			SET_steer(steer);
 			SpeedSet();
 			speed_control();
 		}
@@ -40,6 +41,17 @@ void Pit0ISR()
 	Get_speed();
 	if(wait>0)
 		wait--;
+	if(delay_count<500)
+		delay_count++;
+	else Ramp_Detect();
+		
+	if(Ramp_Flag==1)
+		Ramp_Time++;
+	if(Ramp_Time>180)
+	{
+		Up_Flag=2;
+		Ramp_Flag=0;
+	}
 	PIT.CH[0].TFLG.B.TIF = 1;
 }
 

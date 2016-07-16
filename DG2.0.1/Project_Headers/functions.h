@@ -25,6 +25,8 @@ void speed_control();
 void Key_Detect_Compensator();
 signed int Steer();
 void delay();
+void Ramp_Detect();
 extern unsigned char Left_Compensator, Right_Compensator;
 extern float Middle_Compensator;
+extern unsigned int Uphill,Downhill,Up_Flag,Down_Flag,Ramp_Flag,Ramp_Time;
 #endif /* FUNCTIONS_H_ */
