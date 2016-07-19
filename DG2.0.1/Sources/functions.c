@@ -22,23 +22,22 @@ float sensor[3][10]={0},avr[10]={0.005,0.01,0.01,0.0125,0.0125,0.025,0.025,0.05,
 unsigned int left,right,middle,flag=0,zd_flag=0,slow,pause=0; //车子在赛道的位置标志
 unsigned int count1,count2,currentspeed,speed_target; 
 unsigned int presteer,currentsteer,dsteer,Angle;
-unsigned char Left_Compensator=35, Right_Compensator=36;
-float Middle_Compensator=26;
+unsigned char Left_Compensator=41, Right_Compensator=50;
+float Middle_Compensator=38;
 unsigned int Uphill=0,Downhill=0,Up_Flag=0,Down_Flag=0,Straight,Ramp_Flag,Ramp_Time=0;
 unsigned int 
-             speed1=345,	
-			 speed2=295,
-			 speed3=255,
-			 speed4=225,
-			 speed5=205;
-
+             speed1=310,
+			 speed2=270,
+			 speed3=240,
+			 speed4=220,
+			 speed5=200;
+/*#define D1 36
+#define D2 30*/
 float
-#define D1 38
-#define D2 32
-		kp1=9.3,ki2=0,kd1=D1,  
-		kp2=5.25,ki3=0,kd2=D1,
-		kp3=1.9,ki4=0,kd3=D2,
-		kp4=0.9,ki=0,kd4=D2;
+		kp1=4.6,ki2=0,kd1=35,
+		kp2=2.58,ki3=0,kd2=35,
+		kp3=0.88,k8i4=0,kd3=50,
+		kp4=0.45,ki=0,kd4=55;
 
 
 float kp,ki,kd;
@@ -154,20 +153,20 @@ signed int LocPIDCal(void)
 	
 		
 	dleft=LEFT-start_left;
-	if(dleft>33)
-		dleft=33;
+	if(dleft>41)
+		dleft=41;
 	if(MIDDLE>start_middle)
 		dmiddle=0;
 	else
 		dmiddle=MIDDLE-start_middle;
 	dright=RIGHT-start_right;
-	if(dright>36)
-		dright=36;
+	if(dright>50)
+		dright=50;
 	
 	if(flag==1)
 	{
-		if(dleft<8&&dmiddle<-22&&dright<8)
-			return(190);
+		if(dleft<8&&dmiddle<-30&&dright<8)
+			return(200);
 //		else if(dleft<6&&dmiddle<-25&&dright<6&&Up_Flag==1)
 //			return(0);		
 		else
@@ -192,8 +191,8 @@ signed int LocPIDCal(void)
 	}	
 	else if(flag==2)
 	{
-		if(dright<8&&dmiddle<-22&&dleft<8)
-			return(-190);
+		if(dright<8&&dmiddle<-30&&dleft<8)
+			return(-200);
 //	else if(dleft<6&&dmiddle<-25&&dright<6&&Up_Flag==1)
 //		return(0);
 		else
@@ -268,9 +267,9 @@ signed int LocPIDCal(void)
 				
 		}
 		temp_steer=kp*iError+kd*dError;
-		if(temp_steer>=190)
+		if(temp_steer>=200)
 			flag=1;               //左打死
-		else if(temp_steer<=-190)
+		else if(temp_steer<=-200)
 			flag=2;
 		else 
 			flag=0;
@@ -418,6 +417,7 @@ void sensor_display(void)
 	Dis_Num(0,1,(WORD)start_middle,5);
 	Dis_Num(0,3,(WORD)Openloop_Speed,5);
 	Dis_Num(0,4,(WORD)flag,5);
+	
 	Dis_Num(44,0,(WORD)Uphill,2);
 	Dis_Num(44,1,(WORD)Up_Flag,2);
 	Dis_Num(44,2,(WORD)Down_Flag,2);
@@ -494,9 +494,9 @@ void Get_speed()  //定时2mse采速度
 *****************************************************************************************************************/
 void Set_Middlepoint()
 {
-	start_middle=MIDDLE+23;
-	start_left=LEFT+19;
-	start_right=RIGHT+17;
+	start_middle=MIDDLE+12;
+	start_left=LEFT+18;
+	start_right=RIGHT+15;
 	sensor_compensator=RIGHT-LEFT;
 //	Msetpoint=temp_middle;
 //	Dis_Num(64,6,(WORD)Msetpoint,5);

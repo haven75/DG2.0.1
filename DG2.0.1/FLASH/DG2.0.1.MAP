@@ -750,7 +750,7 @@ extabindex section layout
   00000034 000004 400003fc 000040b4  4 Ramp_Time 	functions_c.obj 
   UNUSED   000004 ........ ........    ki2 functions_c.obj 
   UNUSED   000004 ........ ........    ki3 functions_c.obj 
-  UNUSED   000004 ........ ........    ki4 functions_c.obj 
+  UNUSED   000004 ........ ........    k8i4 functions_c.obj 
   UNUSED   000004 ........ ........    ki functions_c.obj 
   UNUSED   000004 ........ ........    Msetpoint functions_c.obj 
   UNUSED   000004 ........ ........    temp_middle functions_c.obj 
@@ -867,12 +867,12 @@ Memory map:
                .sdata2 400004b4 00000000 00004080 00006880 00006880          0
                 .sbss2 400004b4 00000000 00004080 00006880 00006880          0
                   .bss 400004b8 0000008c 00004080 00006880 00006880          0
-      .PPC.EMB.apuinfo 000095dc 00000000 0000d660 0000fe5c 0000fe5c          0
+      .PPC.EMB.apuinfo 000095d8 00000000 0000d660 0000fe58 0000fe58          0
          .debug_abbrev          00000129 00004080
            .debug_info          00002be0 000041a9
-           .debug_line          00003535 00006d89
-            .debug_loc          0000086f 0000a2be
-       .debug_pubnames          000009f5 0000ab2d
+           .debug_line          00003534 00006d89
+            .debug_loc          0000086f 0000a2bd
+       .debug_pubnames          000009f5 0000ab2c
 
 
 Linker generated symbols:

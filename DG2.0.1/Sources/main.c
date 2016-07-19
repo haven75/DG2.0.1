@@ -17,9 +17,9 @@ void main(void)
 		{
 			sensor_display();
 			steer=STEER_HELM_CENTER+LocPIDCal();
-			if(steer<=1516)
+			if(steer<=1506)
 				steer=1470;
-			if(steer>=1896)
+			if(steer>=1906)
 				steer=1919;
 		    Dis_Num(64,3,(WORD)steer,5);
 			if(Up_Flag==1)
@@ -47,7 +47,7 @@ void Pit0ISR()
 		
 	if(Ramp_Flag==1)
 		Ramp_Time++;
-	if(Ramp_Time>180)
+	if(Ramp_Time>80)
 	{
 		Up_Flag=2;
 		Ramp_Flag=0;
