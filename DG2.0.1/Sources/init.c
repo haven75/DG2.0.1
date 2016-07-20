@@ -301,6 +301,9 @@ void initKeys_Switchs(void)
 	SIU.PCR[56].R = 0x0100;               // PD[8]: Input  switch1
 	SIU.PCR[57].R = 0x0100; 
 	SIU.PCR[22].R = 0x0100; 
+	SIU.PCR[63].R = 0x0100;               //PD[15]¸É»É¹Ü
+	SIU.PCR[15].R = 0x0100;
+	SIU.PCR[44].R = 0x0100;
 }
 
 

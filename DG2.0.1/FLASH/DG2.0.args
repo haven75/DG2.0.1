@@ -7,7 +7,6 @@
 "./Sources/ivor_branch_table_c.obj"
 "./Sources/init_c.obj"
 "./Sources/functions_c.obj"
-"./Sources/ReedSwitch_c.obj"
 "./Sources/IntcInterrupts_c.obj"
 "./Sources/Exceptions_c.obj"
 -sym dwarf-2

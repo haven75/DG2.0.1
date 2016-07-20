@@ -14,7 +14,7 @@
  */
 #include"includes.h"
 #define Hillcont 0
-#define Frequency_Over 220
+#define Frequency_Over 160
 unsigned int chuwan,Hill_count;
 unsigned char StartFlag,StopFlag,RunFlag=2000,Stop=100;
 float fre_diff,dis,LEFT_old,LEFT_new=0,RIGHT_old,RIGHT_new=0,MIDDLE_old,MIDDLE_new=0,temp_steer,temp_steer_old;
@@ -23,22 +23,22 @@ float sensor[3][10]={0},avr[10]={0.005,0.01,0.01,0.0125,0.0125,0.025,0.025,0.05,
 unsigned int left,right,middle,flag=0,zd_flag=0,slow,pause=0; //车子在赛道的位置标志
 unsigned int count1,count2,currentspeed,speed_target; 
 unsigned int presteer,currentsteer,dsteer,Angle;
-unsigned char Left_Compensator=47, Right_Compensator=45;
-float Middle_Compensator=29;
+unsigned char Left_Compensator=40, Right_Compensator=47;
+float Middle_Compensator=34;
 unsigned int Uphill=0,Downhill=0,Up_Flag=0,Down_Flag=0,Straight,Ramp_Flag,Ramp_Time=0;
 unsigned int 
-             speed1=390,
-			 speed2=300,
-			 speed3=260,
+             speed1=380,
+			 speed2=280,
+			 speed3=250,
 			 speed4=230,
 			 speed5=200;
-#define D1 3
-#define D2 30
+#define D1 4
+#define D2 40
 float
-		kp1=3.72,ki2=0,kd1=D2,
-		kp2=2.52,ki3=0,kd2=D2,
-		kp3=1.15,k8i4=0,kd3=D2,
-		kp4=0.6,ki=0,kd4=D2;
+		kp1=3.65,kd1=D2,
+		kp2=2.4,kd2=D2,
+		kp3=1.1,kd3=35,
+		kp4=0.55,kd4=35;
 
 
 float kp,ki,kd;
@@ -239,7 +239,7 @@ signed int LocPIDCal(void)
 /*	if(dleft<4&&dmiddle<-33&&dright<4)
 		return(temp_steer_old);*/
 	if(fre_diff<0)
-		fre_diff*=1.15;
+		fre_diff*=1;
 	iError=fre_diff; 
 	sumerror+=iError;
 	dError=iError-lasterror;
@@ -296,8 +296,8 @@ void speed_control()
 	
 	
 	temp_speed+=speed_kp*(Error[0]-Error[1])+speed_ki*Error[0]+speed_kd*(Error[0]-Error[1]-(Error[1]-Error[2]));
-	if(temp_speed>120)
-		temp_speed=120;
+	if(temp_speed>145)
+		temp_speed=145;
 	if(temp_speed<-120)
 			temp_speed=-120;
 	SET_motor(temp_speed);
@@ -431,6 +431,8 @@ void SpeedSet(void)
 
 	    if(StopFlag==1)
 	    	speed_target=0;
+	    if(Up_Flag==1)
+	    	speed_target=300;
 	    
 }
 /*******************************************************ADC*************************************************************/

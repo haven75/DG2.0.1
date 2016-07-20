@@ -12,7 +12,7 @@
 #include "define.h"
 #include "functions.h"
 #include "oleddriver.h"
-#include "ReedSwitch.h"
+
 
 
 
@@ -36,8 +36,10 @@
 #define Key2 SIU.GPDI[57].R
 #define Key1 SIU.GPDI[22].R
 
+#define ReedSwitch1 SIU.GPDI[63].R
+#define ReedSwitch2 SIU.GPDI[15].R
 
 
 /***************变量定义*****************/
-#define STEER_HELM_CENTER 1264//1706//855//862//853/861.5/
+#define STEER_HELM_CENTER 1258//1706//855//862//853/861.5/
 

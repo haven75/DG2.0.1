@@ -2,7 +2,7 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-#Progress monitor hint: 12
+#Progress monitor hint: 11
 first : all
 -include ../makefile.init
 
@@ -73,7 +73,7 @@ all: warning-messages explicit-dependencies DG2.0.1.elf
 # Tool invocations
 DG2.0.1.elf: $(OBJS) $(USER_OBJS) ../Project_Settings/Linker_Files/MPC5604B_FLASH.lcf
 	@echo 'Building target: $@'
-	@echo 'Executing target #13 $@'
+	@echo 'Executing target #12 $@'
 	@echo 'Invoking: PowerPC Linker'
 	"$(PAToolsDirEnv)/mwldeppc" -o "DG2.0.1.elf" @@"DG2.0.args"  $(USER_OBJS_QUOTED)
 	@echo 'Finished building target: $@'

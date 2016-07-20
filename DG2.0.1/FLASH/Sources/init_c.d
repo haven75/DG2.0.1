@@ -18,5 +18,4 @@ Sources/init_c.obj: C:\Users\Soda\Documents\GitHub\DG2.0.1\DG2.0.1\Sources\init.
 	C:\Users\Soda\Documents\GitHub\DG2.0.1\DG2.0.1\Project_Headers\IntcInterrupts.h \
 	C:\Users\Soda\Documents\GitHub\DG2.0.1\DG2.0.1\Project_Headers\define.h \
 	C:\Users\Soda\Documents\GitHub\DG2.0.1\DG2.0.1\Project_Headers\functions.h \
-	C:\Users\Soda\Documents\GitHub\DG2.0.1\DG2.0.1\Project_Headers\oleddriver.h \
-	C:\Users\Soda\Documents\GitHub\DG2.0.1\DG2.0.1\Project_Headers\ReedSwitch.h 
+	C:\Users\Soda\Documents\GitHub\DG2.0.1\DG2.0.1\Project_Headers\oleddriver.h 

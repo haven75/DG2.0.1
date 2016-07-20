@@ -32,4 +32,5 @@ extern float Middle_Compensator;
 extern unsigned int Uphill,Downhill,Up_Flag,Down_Flag,Ramp_Flag,Ramp_Time,
 speed1,speed2,speed3,speed4,speed5;
 extern unsigned char StartFlag,StopFlag,RunFlag,Stop;
+extern float kp1,kp2,kp3,kp4,kd1,kd2,kd3,kd4;
 #endif /* FUNCTIONS_H_ */
