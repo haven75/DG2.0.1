@@ -22,22 +22,22 @@ float sensor[3][10]={0},avr[10]={0.005,0.01,0.01,0.0125,0.0125,0.025,0.025,0.05,
 unsigned int left,right,middle,flag=0,zd_flag=0,slow,pause=0; //车子在赛道的位置标志
 unsigned int count1,count2,currentspeed,speed_target; 
 unsigned int presteer,currentsteer,dsteer,Angle;
-unsigned char Left_Compensator=41, Right_Compensator=50;
-float Middle_Compensator=38;
+unsigned char Left_Compensator=47, Right_Compensator=45;
+float Middle_Compensator=29;
 unsigned int Uphill=0,Downhill=0,Up_Flag=0,Down_Flag=0,Straight,Ramp_Flag,Ramp_Time=0;
 unsigned int 
-             speed1=310,
-			 speed2=270,
-			 speed3=240,
-			 speed4=220,
-			 speed5=200;
-/*#define D1 36
-#define D2 30*/
+             speed1=380,
+			 speed2=300,
+			 speed3=260,
+			 speed4=230,
+			 speed5=205;
+#define D1 3.5
+#define D2 20
 float
-		kp1=4.6,ki2=0,kd1=35,
-		kp2=2.58,ki3=0,kd2=35,
-		kp3=0.88,k8i4=0,kd3=50,
-		kp4=0.45,ki=0,kd4=55;
+		kp1=3.7,ki2=0,kd1=D2,
+		kp2=2.5,ki3=0,kd2=D2,
+		kp3=1.15,k8i4=0,kd3=D2,
+		kp4=0.6,ki=0,kd4=D2;
 
 
 float kp,ki,kd;
@@ -192,7 +192,7 @@ signed int LocPIDCal(void)
 	else if(flag==2)
 	{
 		if(dright<8&&dmiddle<-30&&dleft<8)
-			return(-200);
+			return(-210);
 //	else if(dleft<6&&dmiddle<-25&&dright<6&&Up_Flag==1)
 //		return(0);
 		else
@@ -248,28 +248,28 @@ signed int LocPIDCal(void)
 		kp=kp4/10*abs(fre_diff);
 		kd=kd4;
 	}
-	else if(fre_diff>=-20&&fre_diff<=20)      //直道
+	else if(fre_diff>=-25&&fre_diff<=25)      //直道
 	{
 
-		kp=kp4+(kp3-kp4)/10*(abs(fre_diff)-10);
+		kp=kp4+(kp3-kp4)/15*(abs(fre_diff)-10);
 		kd=kd3;
 	}
-	else if(fre_diff>=-35&&fre_diff<=35)                                //小弯
+	else if(fre_diff>=-40&&fre_diff<=40)                                //小弯
 	{
-		kp=kp3+(kp2-kp3)/15*(abs(fre_diff)-20);
+		kp=kp3+(kp2-kp3)/15*(abs(fre_diff)-25);
 		kd=kd2;
 	}
 		else                              //小弯
 		{
 
-			kp=kp2+(kp1-kp2)/25*(abs(fre_diff)-35);
+			kp=kp2+(kp1-kp2)/25*(abs(fre_diff)-40);
 			kd=kd1;
 				
 		}
 		temp_steer=kp*iError+kd*dError;
 		if(temp_steer>=200)
 			flag=1;               //左打死
-		else if(temp_steer<=-200)
+		else if(temp_steer<=-210)
 			flag=2;
 		else 
 			flag=0;
@@ -295,10 +295,10 @@ void speed_control()
 	
 	
 	temp_speed+=speed_kp*(Error[0]-Error[1])+speed_ki*Error[0]+speed_kd*(Error[0]-Error[1]-(Error[1]-Error[2]));
-	if(temp_speed>135)
-		temp_speed=135;
-	if(temp_speed<-150)
-			temp_speed=-150;
+	if(temp_speed>120)
+		temp_speed=120;
+	if(temp_speed<-120)
+			temp_speed=-120;
 	SET_motor(temp_speed);
 	if(forward)
 		SET_motor(0);
@@ -313,7 +313,7 @@ void speed_control()
 
 void SpeedSet(void)
 {
-	 if((temp_steer>=181||temp_steer<=-186))
+	 /*if((temp_steer>=181||temp_steer<=-186))
 	{	
 			speed_target=speed5;
 	}
@@ -370,7 +370,67 @@ void SpeedSet(void)
             pause=0;
      }  
     if(StopFlag==1)
-    	speed_target=0;
+    	speed_target=0;*/
+	if((temp_steer>=200||temp_steer<=-210))
+		{	
+			speed_target=speed5;
+		}
+		else if(temp_steer<30&&temp_steer>-30)  
+	    {
+	    	zd_flag++;
+	    	slow++;
+	    	if(zd_flag>100)
+	    	{
+	    		speed_target = speed1;
+	    		chuwan=0;
+	    	}
+	    	pause=0;
+	    } 
+	    else if(temp_steer>-60 && temp_steer<60)
+	    {
+	    	if(zd_flag>300)
+	    	{
+	    		speed_target=speed4;
+	    		pause=1;
+	    	}
+	    	else if(zd_flag>200)
+	    	{
+	    		speed_target=speed5;
+	    		pause=1;
+	    	}
+	    	else
+	    		speed_target = speed2-(abs(temp_steer)-30)/30*(speed2-speed1);
+	    	zd_flag=0;
+	    	pause=0;
+	    } 
+	    else if(temp_steer>-100 && temp_steer<100)
+	    {
+	    	zd_flag=0; 
+	    	if(chuwan)
+	    		slow=0;
+	        speed_target = speed3-(abs(temp_steer)-60)/40*(speed3-speed2);
+	        pause=0;
+	    } 
+	    else if(temp_steer>=-140 && temp_steer<140)
+	    {
+	    	zd_flag=0;
+	    	if(chuwan)
+	    		slow=0;
+	        speed_target = speed4-(abs(temp_steer)-100)/40*(speed4-speed3);
+	        pause=0;
+	    }  
+	    else 
+	    {
+	    	zd_flag=0;
+	    	if(chuwan)
+	    		slow=0;
+	        speed_target = speed5-(abs(temp_steer)-140)/40*(speed5-speed4);
+	        pause=0;
+	    }  
+
+	    if(StopFlag==1)
+	    	speed_target=0;
+	    
 }
 /*******************************************************ADC*************************************************************/
 unsigned int ADC_GetValueChannel()

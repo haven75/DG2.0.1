@@ -17,10 +17,10 @@ void main(void)
 		{
 			sensor_display();
 			steer=STEER_HELM_CENTER+LocPIDCal();
-			if(steer<=1506)
-				steer=1470;
-			if(steer>=1906)
-				steer=1919;
+			if(steer<=STEER_HELM_CENTER-200)
+				steer=STEER_HELM_CENTER-208;
+			if(steer>=STEER_HELM_CENTER+200)
+				steer=STEER_HELM_CENTER+207;
 		    Dis_Num(64,3,(WORD)steer,5);
 			if(Up_Flag==1)
 				steer=STEER_HELM_CENTER;
