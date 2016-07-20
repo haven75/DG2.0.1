@@ -16,6 +16,7 @@
 #define Hillcont 0
 #define Frequency_Over 220
 unsigned int chuwan,Hill_count;
+unsigned char StartFlag,StopFlag,RunFlag=2000,Stop=100;
 float fre_diff,dis,LEFT_old,LEFT_new=0,RIGHT_old,RIGHT_new=0,MIDDLE_old,MIDDLE_new=0,temp_steer,temp_steer_old;
 float LEFT_Temp,RIGHT_Temp,MIDDLE_Temp,Lsum,Rsum,Msum;
 float sensor[3][10]={0},avr[10]={0.005,0.01,0.01,0.0125,0.0125,0.025,0.025,0.05,0.15,0.7};
@@ -26,16 +27,16 @@ unsigned char Left_Compensator=47, Right_Compensator=45;
 float Middle_Compensator=29;
 unsigned int Uphill=0,Downhill=0,Up_Flag=0,Down_Flag=0,Straight,Ramp_Flag,Ramp_Time=0;
 unsigned int 
-             speed1=380,
+             speed1=390,
 			 speed2=300,
 			 speed3=260,
 			 speed4=230,
-			 speed5=205;
-#define D1 3.5
-#define D2 20
+			 speed5=200;
+#define D1 3
+#define D2 30
 float
-		kp1=3.7,ki2=0,kd1=D2,
-		kp2=2.5,ki3=0,kd2=D2,
+		kp1=3.72,ki2=0,kd1=D2,
+		kp2=2.52,ki3=0,kd2=D2,
 		kp3=1.15,k8i4=0,kd3=D2,
 		kp4=0.6,ki=0,kd4=D2;
 
@@ -166,7 +167,7 @@ signed int LocPIDCal(void)
 	if(flag==1)
 	{
 		if(dleft<8&&dmiddle<-30&&dright<8)
-			return(200);
+			return(210);
 //		else if(dleft<6&&dmiddle<-25&&dright<6&&Up_Flag==1)
 //			return(0);		
 		else
@@ -238,7 +239,7 @@ signed int LocPIDCal(void)
 /*	if(dleft<4&&dmiddle<-33&&dright<4)
 		return(temp_steer_old);*/
 	if(fre_diff<0)
-		fre_diff*=1;
+		fre_diff*=1.15;
 	iError=fre_diff; 
 	sumerror+=iError;
 	dError=iError-lasterror;
@@ -267,7 +268,7 @@ signed int LocPIDCal(void)
 				
 		}
 		temp_steer=kp*iError+kd*dError;
-		if(temp_steer>=200)
+		if(temp_steer>=210)
 			flag=1;               //×ó´òËÀ
 		else if(temp_steer<=-210)
 			flag=2;
@@ -731,4 +732,21 @@ void Ramp_Detect()
 		{
 			Down_Flag=2;
 		}
+}
+
+
+
+void StopLineDetect()
+{
+	if(ReedSwitch1==0 || ReedSwitch2==0)
+		StartFlag=1;
+//	if(ReedSwitch1==1 && ReedSwitch2==1 && StartFlag==1)
+/*		RunFlag=2000;
+	if(RunFlag>1)*/
+	if(StartFlag==1)
+		RunFlag--;
+	if(RunFlag<1)
+		RunFlag=1;
+	if((ReedSwitch1==0||ReedSwitch2==0) && RunFlag==1)
+		StopFlag=1;
 }
