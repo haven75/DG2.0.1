@@ -49,7 +49,7 @@ void Pit0ISR()
 
 void FastSpeedMode()
 {
-	speed1=425;
+	speed1=440;
 	speed5=210;
 	for (;;) 
 	{
