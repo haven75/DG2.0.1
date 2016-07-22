@@ -28,7 +28,7 @@ void Pit0ISR()
 		wait--;
 	if(switch4==0)
 	{
-		if(delay_count<500)
+		if(delay_count<400)
 			delay_count++;
 		else Ramp_Detect();
 		if(Ramp_Flag==1)
@@ -39,7 +39,7 @@ void Pit0ISR()
 			Ramp_Flag=0;
 		}
 	}
-	if(switch3==0)
+	if(switch2==0)
 		StartDelay++;
 	if(StartDelay>301)
 		StartDelay=301;
