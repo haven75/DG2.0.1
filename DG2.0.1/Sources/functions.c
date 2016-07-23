@@ -23,7 +23,7 @@ float sensor[3][10]={0},avr[10]={0.005,0.01,0.01,0.0125,0.0125,0.025,0.025,0.05,
 unsigned int left,right,middle,flag=0,zd_flag=0,slow,pause=0; //车子在赛道的位置标志
 unsigned int count1,count2,currentspeed,speed_target; 
 unsigned int presteer,currentsteer,dsteer,Angle;
-unsigned char Left_Compensator=44, Right_Compensator=44;
+unsigned char Left_Compensator=42, Right_Compensator=44;
 float Middle_Compensator=36;
 unsigned int Uphill=0,Downhill=0,Up_Flag=0,Down_Flag=0,Straight,Ramp_Flag,Ramp_Time=0;
 unsigned int 
@@ -33,12 +33,12 @@ unsigned int
 			 speed4=230,
 			 speed5=200;
 #define D1 4
-#define D2 40
+#define D2 37
 float
 		kp1=3.68,kd1=D2,
 		kp2=2.44,kd2=D2,
-		kp3=1.1,kd3=35,
-		kp4=0.54,kd4=35;
+		kp3=1.05,kd3=32,
+		kp4=0.52,kd4=32;
 
 
 float kp,ki,kd;
@@ -478,7 +478,7 @@ void sensor_display(void)
 	Dis_Num(0,0,(WORD)start_left,5);
 	Dis_Num(0,2,(WORD)start_right,5);
 	Dis_Num(0,1,(WORD)start_middle,5);
-	Dis_Num(0,3,(WORD)Openloop_Speed,5);
+	Dis_Num(0,3,(WORD)STEER_HELM_CENTER,5);
 	Dis_Num(0,4,(WORD)flag,5);
 	
 	Dis_Num(44,0,(WORD)Uphill,2);
@@ -642,7 +642,7 @@ void Key_Detect_Compensator()
 		{
 			delay();
 		if(Key1==0)
-			Left_Compensator--;
+			STEER_HELM_CENTER--;
 		while(Key1==0)
 			sensor_display();
 		}
@@ -650,7 +650,7 @@ void Key_Detect_Compensator()
 		{
 			delay();
 			if(Key2==0)
-				Left_Compensator++;
+				STEER_HELM_CENTER++;
 			while(Key2==0)
 				sensor_display();
 		}

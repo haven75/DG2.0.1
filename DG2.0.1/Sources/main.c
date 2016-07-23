@@ -49,8 +49,8 @@ void Pit0ISR()
 
 void FastSpeedMode()
 {
-	speed1=440;
-	speed5=210;
+	speed1=430;
+	speed5=200;
 	for (;;) 
 	{
 		Key_Detect_Compensator();
@@ -78,8 +78,8 @@ void FastSpeedMode()
                    
 void MiddleSpeedMode()
 {
-	speed1=390;
-	speed5=195;
+	speed1=410;
+	speed5=200;
 	for (;;) 
 	{
 		Key_Detect_Compensator();
@@ -107,8 +107,8 @@ void MiddleSpeedMode()
 
 void SlowSpeedMode()
 {
-	speed1=370;
-	speed5=185;
+	speed1=390;
+	speed5=195;
 	for (;;) 
 	{
 		Key_Detect_Compensator();
