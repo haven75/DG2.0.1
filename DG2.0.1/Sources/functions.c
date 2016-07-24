@@ -14,7 +14,7 @@
  */
 #include"includes.h"
 #define Hillcont 0
-#define Frequency_Over 120
+#define Frequency_Over 140
 unsigned int chuwan,Hill_count;
 unsigned char StartFlag,StopFlag,RunFlag=2000,Stop=100;
 float fre_diff,dis,LEFT_old,LEFT_new=0,RIGHT_old,RIGHT_new=0,MIDDLE_old,MIDDLE_new=0,temp_steer,temp_steer_old;
@@ -558,8 +558,8 @@ void Get_speed()  //定时2mse采速度
 void Set_Middlepoint()
 {
 	start_middle=MIDDLE+12;
-	start_left=LEFT+18;
-	start_right=RIGHT+15;
+	start_left=LEFT+19;
+	start_right=RIGHT+16;
 	sensor_compensator=RIGHT-LEFT;
 //	Msetpoint=temp_middle;
 //	Dis_Num(64,6,(WORD)Msetpoint,5);
@@ -642,7 +642,7 @@ void Key_Detect_Compensator()
 		{
 			delay();
 		if(Key1==0)
-			STEER_HELM_CENTER--;
+		//	STEER_HELM_CENTER--;
 		while(Key1==0)
 			sensor_display();
 		}
@@ -650,7 +650,7 @@ void Key_Detect_Compensator()
 		{
 			delay();
 			if(Key2==0)
-				STEER_HELM_CENTER++;
+				//STEER_HELM_CENTER++;
 			while(Key2==0)
 				sensor_display();
 		}

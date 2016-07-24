@@ -107,7 +107,7 @@ void MiddleSpeedMode()
 
 void SlowSpeedMode()
 {
-	speed1=390;
+	speed1=400;
 	speed5=195;
 	for (;;) 
 	{
