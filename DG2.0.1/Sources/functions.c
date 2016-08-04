@@ -23,22 +23,23 @@ float sensor[3][10]={0},avr[10]={0.005,0.01,0.01,0.0125,0.0125,0.025,0.025,0.05,
 unsigned int left,right,middle,flag=0,zd_flag=0,slow,pause=0; //车子在赛道的位置标志
 unsigned int count1,count2,currentspeed,speed_target; 
 unsigned int presteer,currentsteer,dsteer,Angle;
-unsigned char Left_Compensator=42, Right_Compensator=44;
-float Middle_Compensator=36;
+unsigned char Left_Compensator=20, Right_Compensator=23;
+float Middle_Compensator=18;
+float iError,dError;
 unsigned int Uphill=0,Downhill=0,Up_Flag=0,Down_Flag=0,Straight,Ramp_Flag,Ramp_Time=0;
 unsigned int 
-             speed1=380,
-			 speed2=280,
-			 speed3=250,
+             speed1=480,
+			 speed2=360,
+			 speed3=280,
 			 speed4=230,
-			 speed5=200;
-#define D1 4
-#define D2 37
+			 speed5=210;
+#define D1 10
+#define D2 45
 float
-		kp1=3.68,kd1=D2,
-		kp2=2.44,kd2=D2,
-		kp3=1.05,kd3=32,
-		kp4=0.52,kd4=32;
+		kp1=11,kd1=D1,
+		kp2=7.4,kd2=D2,
+		kp3=2.5,kd3=D2,
+		kp4=1.5,kd4=D2;
 
 
 float kp,ki,kd;
@@ -149,24 +150,21 @@ unsigned int abs(signed int x)
 *****************************************************************************************************************/
 signed int LocPIDCal(void)
 {
-	register float iError,dError;
-	
-	
 		
 	dleft=LEFT-start_left;
-	if(dleft>41)
-		dleft=41;
+	if(dleft>Left_Compensator)
+		dleft=Left_Compensator;
 	if(MIDDLE>start_middle)
 		dmiddle=0;
 	else
 		dmiddle=MIDDLE-start_middle;
 	dright=RIGHT-start_right;
-	if(dright>50)
-		dright=50;
+	if(dright>Right_Compensator)
+		dright=Right_Compensator;
 	
 	if(flag==1)
 	{
-		if(dleft<8&&dmiddle<-30&&dright<8)
+		if(dleft<4&&dmiddle<-15&&dright<4)
 			return(210);
 //		else if(dleft<6&&dmiddle<-25&&dright<6&&Up_Flag==1)
 //			return(0);		
@@ -192,7 +190,7 @@ signed int LocPIDCal(void)
 	}	
 	else if(flag==2)
 	{
-		if(dright<8&&dmiddle<-30&&dleft<8)
+		if(dright<4&&dmiddle<-15&&dleft<4)
 			return(-210);
 //	else if(dleft<6&&dmiddle<-25&&dright<6&&Up_Flag==1)
 //		return(0);
@@ -294,12 +292,11 @@ void speed_control()
 	Error[0]=speed_iError;
 	
 	
-	
 	temp_speed+=speed_kp*(Error[0]-Error[1])+speed_ki*Error[0]+speed_kd*(Error[0]-Error[1]-(Error[1]-Error[2]));
-	if(temp_speed>145)
-		temp_speed=145;
-	if(temp_speed<-120)
-			temp_speed=-120;
+	if(temp_speed>150)
+		temp_speed=150;
+	if(temp_speed<-160)
+			temp_speed=-160;
 	SET_motor(temp_speed);
 	if(forward)
 		SET_motor(0);
@@ -371,7 +368,10 @@ void SpeedSet(void)
             pause=0;
      }  
     if(StopFlag==1)
-    	speed_target=0;*/
+    	speed_target=0;
+    	
+    	
+    	
 	if((temp_steer>=200||temp_steer<=-210))
 		{	
 			speed_target=speed5;
@@ -432,8 +432,57 @@ void SpeedSet(void)
 	    if(StopFlag==1)
 	    	speed_target=0;
 	    if(Up_Flag==1)
-	    	speed_target=200;
-	    
+	    	speed_target=200;*/
+	if(abs(iError)<6)
+		{
+			if(abs(dError)<3)
+				speed_target=speed1;
+			else
+				speed_target=speed1-40;
+			zd_flag=1;
+		}
+		else if(abs(iError)<12)
+		{	
+			if(zd_flag)
+				speed_target=speed3;
+			else
+				speed_target=speed1-(speed1-speed2)/10*(abs(iError)-6);
+			//zd_flag=0;
+		}
+		else if(abs(iError)<20)
+		{
+			if(zd_flag)
+				speed_target=speed4;
+			else
+				speed_target=speed2-(speed2-speed3)/10*(abs(iError)-12);
+	 		//zd_flag=0;
+		}
+		else if(abs(iError)<30)
+		{
+			if(zd_flag)
+				speed_target=speed5;
+			else
+				speed_target=speed3-(speed3-speed4)/10*(abs(iError)-20);
+			//zd_flag=0;
+		}
+		else 
+		{
+			if(zd_flag)
+				speed_target=speed5-30;
+			else
+				speed_target=speed4-(speed4-speed5)/10*(abs(iError)-30);
+			//zd_flag=0;
+		}
+		if(temp_steer>=210||temp_steer<=-218)
+		{
+			if(zd_flag)
+				speed_target=speed5-100;
+			else 
+				speed_target=speed5;
+			zd_flag=0;
+		}
+		if(speed_target>speed1)
+			speed_target=speed1;
 }
 /*******************************************************ADC*************************************************************/
 unsigned int ADC_GetValueChannel()

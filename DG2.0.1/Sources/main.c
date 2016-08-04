@@ -49,8 +49,8 @@ void Pit0ISR()
 
 void FastSpeedMode()
 {
-	speed1=430;
-	speed5=200;
+	/*speed1=430;
+	speed5=200;*/
 	for (;;) 
 	{
 		Key_Detect_Compensator();
