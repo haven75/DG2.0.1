@@ -28,16 +28,16 @@ float Middle_Compensator=18;
 float iError,dError;
 unsigned int Uphill=0,Downhill=0,Up_Flag=0,Down_Flag=0,Straight,Ramp_Flag,Ramp_Time=0;
 unsigned int 
-             speed1=485,
-			 speed2=400,
-			 speed3=290,
+             speed1=490,
+			 speed2=410,
+			 speed3=300,
 			 speed4=225,
 			 speed5=210;
 #define D1 45
 #define D2 45
 float
-		kp1=11.4,kd1=D1,
-		kp2=7.2,kd2=D1,
+		kp1=11.3,kd1=D1,
+		kp2=7,kd2=D1,
 		kp3=2,kd3=D2,
 		kp4=1.1,kd4=D2;
 
@@ -291,10 +291,10 @@ void speed_control()
 	Error[1]=Error[0];
 	Error[0]=speed_iError;
 	
-	if(speed_iError>180)
-		temp_speed=160;
-	else if(speed_iError<-180)
-		temp_speed=-160;
+	if(speed_iError>170)
+		temp_speed=170;
+	else if(speed_iError<-170)
+		temp_speed=-170;
 	else
 		temp_speed+=speed_kp*(Error[0]-Error[1])+speed_ki*Error[0]+speed_kd*(Error[0]-Error[1]-(Error[1]-Error[2]));
 	if(temp_speed>160)
