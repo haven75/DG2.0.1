@@ -28,18 +28,18 @@ float Middle_Compensator=18;
 float iError,dError;
 unsigned int Uphill=0,Downhill=0,Up_Flag=0,Down_Flag=0,Straight,Ramp_Flag,Ramp_Time=0;
 unsigned int 
-             speed1=480,
-			 speed2=360,
-			 speed3=280,
-			 speed4=230,
+             speed1=485,
+			 speed2=400,
+			 speed3=290,
+			 speed4=225,
 			 speed5=210;
-#define D1 10
+#define D1 45
 #define D2 45
 float
-		kp1=11,kd1=D1,
-		kp2=7.4,kd2=D2,
-		kp3=2.5,kd3=D2,
-		kp4=1.5,kd4=D2;
+		kp1=11.4,kd1=D1,
+		kp2=7.2,kd2=D1,
+		kp3=2,kd3=D2,
+		kp4=1.1,kd4=D2;
 
 
 float kp,ki,kd;
@@ -291,12 +291,16 @@ void speed_control()
 	Error[1]=Error[0];
 	Error[0]=speed_iError;
 	
-	
-	temp_speed+=speed_kp*(Error[0]-Error[1])+speed_ki*Error[0]+speed_kd*(Error[0]-Error[1]-(Error[1]-Error[2]));
-	if(temp_speed>150)
-		temp_speed=150;
-	if(temp_speed<-160)
-			temp_speed=-160;
+	if(speed_iError>180)
+		temp_speed=160;
+	else if(speed_iError<-180)
+		temp_speed=-160;
+	else
+		temp_speed+=speed_kp*(Error[0]-Error[1])+speed_ki*Error[0]+speed_kd*(Error[0]-Error[1]-(Error[1]-Error[2]));
+	if(temp_speed>160)
+		temp_speed=160;
+	if(temp_speed<-180)
+			temp_speed=-180;
 	SET_motor(temp_speed);
 	if(forward)
 		SET_motor(0);
@@ -433,12 +437,12 @@ void SpeedSet(void)
 	    	speed_target=0;
 	    if(Up_Flag==1)
 	    	speed_target=200;*/
-	if(abs(iError)<6)
+	if(abs(iError)<8)
 		{
 			if(abs(dError)<3)
 				speed_target=speed1;
 			else
-				speed_target=speed1-40;
+				speed_target=speed1-20;
 			zd_flag=1;
 		}
 		else if(abs(iError)<12)
@@ -446,7 +450,7 @@ void SpeedSet(void)
 			if(zd_flag)
 				speed_target=speed3;
 			else
-				speed_target=speed1-(speed1-speed2)/10*(abs(iError)-6);
+				speed_target=speed1-(speed1-speed2)/10*(abs(iError)-8);
 			//zd_flag=0;
 		}
 		else if(abs(iError)<20)
@@ -476,7 +480,7 @@ void SpeedSet(void)
 		if(temp_steer>=210||temp_steer<=-218)
 		{
 			if(zd_flag)
-				speed_target=speed5-100;
+				speed_target=speed5-40;
 			else 
 				speed_target=speed5;
 			zd_flag=0;
