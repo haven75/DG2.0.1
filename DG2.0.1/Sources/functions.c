@@ -23,23 +23,23 @@ float sensor[3][10]={0},avr[10]={0.005,0.01,0.01,0.0125,0.0125,0.025,0.025,0.05,
 unsigned int left,right,middle,flag=0,zd_flag=0,slow,pause=0; //车子在赛道的位置标志
 unsigned int count1,count2,currentspeed,speed_target; 
 unsigned int presteer,currentsteer,dsteer,Angle;
-unsigned char Left_Compensator=20, Right_Compensator=23;
-float Middle_Compensator=18;
+unsigned char Left_Compensator=19, Right_Compensator=20;
+float Middle_Compensator=15;
 float iError,dError;
 unsigned int Uphill=0,Downhill=0,Up_Flag=0,Down_Flag=0,Straight,Ramp_Flag,Ramp_Time=0;
 unsigned int 
-             speed1=490,
-			 speed2=410,
-			 speed3=300,
-			 speed4=225,
-			 speed5=210;
-#define D1 45
-#define D2 45
+             speed1=450,
+			 speed2=340,
+			 speed3=250,
+			 speed4=210,
+			 speed5=200;
+#define D1 35
+#define D2 30
 float
-		kp1=11.3,kd1=D1,
-		kp2=7,kd2=D1,
-		kp3=2,kd3=D2,
-		kp4=1.1,kd4=D2;
+		kp1=10,kd1=D1,//5.3
+		kp2=6.7,kd2=D1, //4
+		kp3=2.8,kd3=D1,   //2.2
+		kp4=1,kd4=D1;    //1.2
 
 
 float kp,ki,kd;
@@ -164,8 +164,12 @@ signed int LocPIDCal(void)
 	
 	if(flag==1)
 	{
-		if(dleft<4&&dmiddle<-15&&dright<4)
+		if(dleft<4&&dmiddle<-Middle_Compensator+3&&dright<4)
+		{
 			return(210);
+			flag=1;
+		}
+			//return(210);
 //		else if(dleft<6&&dmiddle<-25&&dright<6&&Up_Flag==1)
 //			return(0);		
 		else
@@ -190,8 +194,12 @@ signed int LocPIDCal(void)
 	}	
 	else if(flag==2)
 	{
-		if(dright<4&&dmiddle<-15&&dleft<4)
+		if(dright<4&&dmiddle<-Middle_Compensator+3&&dleft<4)
+		{
 			return(-210);
+			flag=2;
+		}
+			//return(-210);
 //	else if(dleft<6&&dmiddle<-25&&dright<6&&Up_Flag==1)
 //		return(0);
 		else
@@ -241,8 +249,32 @@ signed int LocPIDCal(void)
 	iError=fre_diff; 
 	sumerror+=iError;
 	dError=iError-lasterror;
-	lasterror=iError;		
-	if(fre_diff>=-10&&fre_diff<=10)      //直道
+	lasterror=iError;	
+	if(fre_diff>=-6&&fre_diff<=6)      //直道
+	{
+		kp=kp4/6*abs(fre_diff);
+		kd=kd4;
+	}
+	else if(fre_diff>=-14&&fre_diff<=14)      //直道
+	{
+
+		kp=kp4+(kp3-kp4)/8*(abs(fre_diff)-6);
+		kd=kd3;
+	}
+	else if(fre_diff>=-20&&fre_diff<=20)                                //小弯
+	{
+		kp=kp3+(kp2-kp3)/6*(abs(fre_diff)-14);
+		kd=kd2;
+	}
+		else                              //小弯
+		{
+
+			kp=kp2+(kp1-kp2)/10*(abs(fre_diff)-20);
+			kd=kd1;
+				
+		}
+	
+/*	if(fre_diff>=-10&&fre_diff<=10)      //直道
 	{
 		kp=kp4/10*abs(fre_diff);
 		kd=kd4;
@@ -264,10 +296,12 @@ signed int LocPIDCal(void)
 			kp=kp2+(kp1-kp2)/25*(abs(fre_diff)-40);
 			kd=kd1;
 				
-		}
+		}*/
 		temp_steer=kp*iError+kd*dError;
-		if(temp_steer>=210)
+		//if(temp_steer>=210)
+		if(temp_steer>210)
 			flag=1;               //左打死
+		//else if(temp_steer<=-210)
 		else if(temp_steer<=-210)
 			flag=2;
 		else 
@@ -297,8 +331,8 @@ void speed_control()
 		temp_speed=-170;
 	else
 		temp_speed+=speed_kp*(Error[0]-Error[1])+speed_ki*Error[0]+speed_kd*(Error[0]-Error[1]-(Error[1]-Error[2]));
-	if(temp_speed>160)
-		temp_speed=160;
+	if(temp_speed>150)
+		temp_speed=150;
 	if(temp_speed<-180)
 			temp_speed=-180;
 	SET_motor(temp_speed);
@@ -315,7 +349,7 @@ void speed_control()
 
 void SpeedSet(void)
 {
-	 /*if((temp_steer>=181||temp_steer<=-186))
+	/* if((temp_steer>=181||temp_steer<=-186))
 	{	
 			speed_target=speed5;
 	}
@@ -437,7 +471,7 @@ void SpeedSet(void)
 	    	speed_target=0;
 	    if(Up_Flag==1)
 	    	speed_target=200;*/
-	if(abs(iError)<8)
+	if(abs(iError)<6)
 		{
 			if(abs(dError)<3)
 				speed_target=speed1;
@@ -445,28 +479,28 @@ void SpeedSet(void)
 				speed_target=speed1-20;
 			zd_flag=1;
 		}
-		else if(abs(iError)<12)
+		else if(abs(iError)<10)
 		{	
 			if(zd_flag)
 				speed_target=speed3;
 			else
-				speed_target=speed1-(speed1-speed2)/10*(abs(iError)-8);
+				speed_target=speed1-(speed1-speed2)/4*(abs(iError)-6);
 			//zd_flag=0;
 		}
-		else if(abs(iError)<20)
+		else if(abs(iError)<18)
 		{
 			if(zd_flag)
 				speed_target=speed4;
 			else
-				speed_target=speed2-(speed2-speed3)/10*(abs(iError)-12);
+				speed_target=speed2-(speed2-speed3)/8*(abs(iError)-10);
 	 		//zd_flag=0;
 		}
-		else if(abs(iError)<30)
+		else if(abs(iError)<25)
 		{
 			if(zd_flag)
 				speed_target=speed5;
 			else
-				speed_target=speed3-(speed3-speed4)/10*(abs(iError)-20);
+				speed_target=speed3-(speed3-speed4)/7*(abs(iError)-18);
 			//zd_flag=0;
 		}
 		else 
@@ -474,10 +508,10 @@ void SpeedSet(void)
 			if(zd_flag)
 				speed_target=speed5-30;
 			else
-				speed_target=speed4-(speed4-speed5)/10*(abs(iError)-30);
+				speed_target=speed4-(speed4-speed5)/10*(abs(iError)-25);
 			//zd_flag=0;
 		}
-		if(temp_steer>=210||temp_steer<=-218)
+		if(temp_steer>=210||temp_steer<=-210)
 		{
 			if(zd_flag)
 				speed_target=speed5-40;
@@ -533,7 +567,6 @@ void sensor_display(void)
 	Dis_Num(0,1,(WORD)start_middle,5);
 	Dis_Num(0,3,(WORD)STEER_HELM_CENTER,5);
 	Dis_Num(0,4,(WORD)flag,5);
-	
 	Dis_Num(44,0,(WORD)Uphill,2);
 	Dis_Num(44,1,(WORD)Up_Flag,2);
 	Dis_Num(44,2,(WORD)Down_Flag,2);
@@ -610,9 +643,9 @@ void Get_speed()  //定时2mse采速度
 *****************************************************************************************************************/
 void Set_Middlepoint()
 {
-	start_middle=MIDDLE+12;
-	start_left=LEFT+19;
-	start_right=RIGHT+16;
+	start_left=LEFT+18;//609;
+	start_middle=MIDDLE+13;//350;
+	start_right=RIGHT+13;//421;
 	sensor_compensator=RIGHT-LEFT;
 //	Msetpoint=temp_middle;
 //	Dis_Num(64,6,(WORD)Msetpoint,5);
