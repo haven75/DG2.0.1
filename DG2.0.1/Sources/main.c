@@ -59,7 +59,7 @@ void FastSpeedMode()
 			sensor_display();
 			steer=STEER_HELM_CENTER+LocPIDCal();
 			if(steer<=STEER_HELM_CENTER-210)
-				steer=STEER_HELM_CENTER-235;
+				steer=STEER_HELM_CENTER-215;
 			if(steer>=STEER_HELM_CENTER+210)
 				steer=STEER_HELM_CENTER+213;
 			Dis_Num(64,3,(WORD)steer,4);
