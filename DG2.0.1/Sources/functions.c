@@ -164,8 +164,12 @@ signed int LocPIDCal(void)
 	
 	if(flag==1)
 	{
-		if(dleft<4&&dmiddle<-15&&dright<4)
+		if(dleft<4&&dmiddle<-Middle_Compensator+3&&dright<4)
+		{
 			return(210);
+			flag=1;
+		}
+			//return(210);
 //		else if(dleft<6&&dmiddle<-25&&dright<6&&Up_Flag==1)
 //			return(0);		
 		else
@@ -190,8 +194,12 @@ signed int LocPIDCal(void)
 	}	
 	else if(flag==2)
 	{
-		if(dright<4&&dmiddle<-15&&dleft<4)
+		if(dright<4&&dmiddle<-Middle_Compensator+3&&dleft<4)
+		{
 			return(-210);
+			flag=2;
+		}
+			//return(-210);
 //	else if(dleft<6&&dmiddle<-25&&dright<6&&Up_Flag==1)
 //		return(0);
 		else
@@ -296,8 +304,8 @@ void speed_control()
 		temp_speed=-170;
 	else
 		temp_speed+=speed_kp*(Error[0]-Error[1])+speed_ki*Error[0]+speed_kd*(Error[0]-Error[1]-(Error[1]-Error[2]));
-	if(temp_speed>160)
-		temp_speed=160;
+	if(temp_speed>150)
+		temp_speed=150;
 	if(temp_speed<-180)
 			temp_speed=-180;
 	SET_motor(temp_speed);
@@ -314,6 +322,7 @@ void speed_control()
 
 void SpeedSet(void)
 {
+
 	if(forward)
 	{
 		speed_target=0;
@@ -452,29 +461,50 @@ void SpeedSet(void)
 			zd_flag++;
 
 		}
+<<<<<<< HEAD
 		else if(abs(iError)<11)
+=======
+		else if(abs(iError)<10)
+>>>>>>> master
 		{	
 			if(zd_flag>150)
 				speed_target=speed5;
 			else
+<<<<<<< HEAD
 				speed_target=speed1-(speed1-speed2)/4*(abs(iError)-7);
 			zd_flag=0;
 		}
 		else if(abs(iError)<17)
+=======
+				speed_target=speed1-(speed1-speed2)/4*(abs(iError)-6);
+			//zd_flag=0;
+		}
+		else if(abs(iError)<18)
+>>>>>>> master
 		{
 		if(zd_flag>150)
 				speed_target=speed4;
 			else
+<<<<<<< HEAD
 				speed_target=speed2-(speed2-speed3)/6*(abs(iError)-11);
 	 		zd_flag=0;
+=======
+				speed_target=speed2-(speed2-speed3)/8*(abs(iError)-10);
+	 		//zd_flag=0;
+>>>>>>> master
 		}
 		else if(abs(iError)<25)
 		{
 			if(zd_flag>200)
 				speed_target=speed5;
 			else
+<<<<<<< HEAD
 				speed_target=speed3-(speed3-speed4)/8*(abs(iError)-17);
 			zd_flag=0;
+=======
+				speed_target=speed3-(speed3-speed4)/7*(abs(iError)-18);
+			//zd_flag=0;
+>>>>>>> master
 		}
 		else 
 		{
@@ -482,7 +512,11 @@ void SpeedSet(void)
 				speed_target=speed5-30;
 			else
 				speed_target=speed4-(speed4-speed5)/10*(abs(iError)-25);
+<<<<<<< HEAD
 			zd_flag=0;
+=======
+			//zd_flag=0;
+>>>>>>> master
 		}
 		if(temp_steer>=210||temp_steer<=-210)
 		{
@@ -540,7 +574,6 @@ void sensor_display(void)
 	Dis_Num(0,1,(WORD)start_middle,5);
 	Dis_Num(0,3,(WORD)STEER_HELM_CENTER,5);
 	Dis_Num(0,4,(WORD)flag,5);
-	
 	Dis_Num(44,0,(WORD)Uphill,2);
 	Dis_Num(44,1,(WORD)Up_Flag,2);
 	Dis_Num(44,2,(WORD)Down_Flag,2);
