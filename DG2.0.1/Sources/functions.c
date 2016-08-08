@@ -29,10 +29,10 @@ float iError,dError;
 unsigned int Uphill=0,Downhill=0,Up_Flag=0,Down_Flag=0,Straight,Ramp_Flag,Ramp_Time=0;
 unsigned int 
              speed1=400,
-			 speed2=320,
+			 speed2=340,
 			 speed3=250,
 			 speed4=225,
-			 speed5=190;
+			 speed5=200;
 #define D1 37
 #define D2 37
 float
