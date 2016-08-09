@@ -23,23 +23,23 @@ float sensor[3][10]={0},avr[10]={0.005,0.01,0.01,0.0125,0.0125,0.025,0.025,0.05,
 unsigned int left,right,middle,flag=0,zd_flag=0,slow,pause=0; //车子在赛道的位置标志
 unsigned int count1,count2,currentspeed,speed_target; 
 unsigned int presteer,currentsteer,dsteer,Angle;
-unsigned char Left_Compensator=17, Right_Compensator=19;
-float Middle_Compensator=14;
+unsigned char Left_Compensator=17, Right_Compensator=20;
+float Middle_Compensator=15;
 float iError,dError;
 unsigned int Uphill=0,Downhill=0,Up_Flag=0,Down_Flag=0,Straight,Ramp_Flag,Ramp_Time=0;
 unsigned int 
-             speed1=400,
-			 speed2=340,
-			 speed3=250,
-			 speed4=225,
-			 speed5=200;
-#define D1 37
-#define D2 37
+             speed1=410,
+			 speed2=380,
+			 speed3=300,
+			 speed4=240,
+			 speed5=185;
+#define D1 40
+#define D2 40
 float
-		kp1=8.9,kd1=D1,
-		kp2=5.7,kd2=D1,
-		kp3=2.9,kd3=D2,
-		kp4=1.2,kd4=D2;
+		kp1=9,kd1=D1,
+		kp2=5.1,kd2=D1,
+		kp3=2.8,kd3=D2,
+		kp4=1.1,kd4=D2;
 
 
 float kp,ki,kd;
@@ -245,31 +245,31 @@ signed int LocPIDCal(void)
 /*	if(dleft<4&&dmiddle<-33&&dright<4)
 		return(temp_steer_old);*/
 	if(fre_diff<0)
-		fre_diff*=1;
+		fre_diff*=1.25;
 	iError=fre_diff; 
 	sumerror+=iError;
 	dError=iError-lasterror;
 	lasterror=iError;		
-	if(fre_diff>=-7&&fre_diff<=7)      //直道
+	if(fre_diff>=-8&&fre_diff<=8)      //直道
 	{
-		kp=kp4/7*abs(fre_diff);
+		kp=kp4/8*abs(fre_diff);
 		kd=kd4;
 	}
-	else if(fre_diff>=-14&&fre_diff<=14)      //直道
+	else if(fre_diff>=-16&&fre_diff<=16)      //直道
 	{
 
-		kp=kp4+(kp3-kp4)/7*(abs(fre_diff)-7);
+		kp=kp4+(kp3-kp4)/8*(abs(fre_diff)-8);
 		kd=kd3;
 	}
-	else if(fre_diff>=-21&&fre_diff<=21)                                //小弯
+	else if(fre_diff>=-24&&fre_diff<=24)                                //小弯
 	{
-		kp=kp3+(kp2-kp3)/7*(abs(fre_diff)-14);
+		kp=kp3+(kp2-kp3)/8*(abs(fre_diff)-16);
 		kd=kd2;
 	}
 	else                              //小弯
 	{
 
-		kp=kp2+(kp1-kp2)/10*(abs(fre_diff)-21);
+		kp=kp2+(kp1-kp2)/8*(abs(fre_diff)-24);
 		kd=kd1;		
 	}
 	temp_steer=kp*iError+kd*dError;
@@ -299,15 +299,15 @@ void speed_control()
 	Error[0]=speed_iError;
 	
 	if(speed_iError>90)
-		temp_speed=170;
-	else if(speed_iError<-90)
-		temp_speed=-170;
+		temp_speed=180;
+	else if(speed_iError<-110)
+		temp_speed=-180;
 	else
 		temp_speed+=speed_kp*(Error[0]-Error[1])+speed_ki*Error[0]+speed_kd*(Error[0]-Error[1]-(Error[1]-Error[2]));
-	if(temp_speed>150)
-		temp_speed=150;
-	if(temp_speed<-180)
-			temp_speed=-180;
+	if(temp_speed>180)
+		temp_speed=180;
+	if(temp_speed<-190)
+			temp_speed=-190;
 	SET_motor(temp_speed);
 	if(forward)
 		SET_motor(0);
@@ -397,36 +397,61 @@ void SpeedSet(void)
 	    {
 	    	zd_flag++;
 	    	slow++;
-	    	if(zd_flag>70)
+	    	if(zd_flag>50)
 	    	{
 	    		speed_target = speed1;
 	    		chuwan=0;
 	    	}
+	    	else
+	    		speed_target = speed1-40;
+	    		
 	    	pause=0;
 	    } 
 	    else if(temp_steer>-60 && temp_steer<60)
 	    {
 	   	if(zd_flag>200)
-	    	{
-	    		speed_target=speed4;
-	    		pause=1;
-	    	}
-	    	else if(zd_flag>100)
-	    	{
-	    		speed_target=speed5;
-	    		pause=1;
-	    	}
-	    	else
-	    		speed_target = speed2-(abs(temp_steer)-30)/30*(speed2-speed1);
-	    	zd_flag=0;
-	    	pause=0;
+		{
+			speed_target=speed5-60;
+			pause=1;
+		}
+		else if(zd_flag>100)
+		{
+			speed_target=speed4-50;
+			pause=1;
+		}
+		else if(zd_flag>50)
+		{
+			speed_target=speed4;
+			pause=1;
+		}
+		else
+			speed_target = speed2-(abs(temp_steer)-30)/30*(speed2-speed1);
+ //   	zd_flag=0;
+		pause=0;
 	    } 
 	    else if(temp_steer>-100 && temp_steer<100)
 	    {
+	    	if(zd_flag>200)
+			{
+				speed_target=speed5-60;
+				pause=1;
+			}
+			else if(zd_flag>100)
+			{
+				speed_target=speed4-50;
+				pause=1;
+			}
+			else if(zd_flag>50)
+			{
+				speed_target=speed4;
+				pause=1;
+			}
+			else
+				speed_target = speed3-(abs(temp_steer)-60)/40*(speed3-speed2);
 	    	zd_flag=0; 
 	    	if(chuwan)
 	    		slow=0;
-	        speed_target = speed3-(abs(temp_steer)-60)/40*(speed3-speed2);
+	        
 	        pause=0;
 	    } 
 	    else if(temp_steer>=-140 && temp_steer<140)
