@@ -397,13 +397,10 @@ void SpeedSet(void)
 	    {
 	    	zd_flag++;
 	    	slow++;
-	    	if(zd_flag>50)
-	    	{
-	    		speed_target = speed1;
-	    		chuwan=0;
-	    	}
-	    	else
-	    		speed_target = speed1-40;
+	//    	if(zd_flag>50)
+	  	    	speed_target = speed1;
+	//    	else
+	//    		speed_target = speed1-40;
 	    		
 	    	pause=0;
 	    } 
