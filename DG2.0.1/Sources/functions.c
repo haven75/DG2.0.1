@@ -14,7 +14,7 @@
  */
 #include"includes.h"
 #define Hillcont 0
-#define Frequency_Over 140
+#define Frequency_Over 80
 unsigned int chuwan,Hill_count;
 unsigned char StartFlag,StopFlag,RunFlag=2000,Stop=100;
 float fre_diff,dis,LEFT_old,LEFT_new=0,RIGHT_old,RIGHT_new=0,MIDDLE_old,MIDDLE_new=0,temp_steer,temp_steer_old;
@@ -23,22 +23,22 @@ float sensor[3][10]={0},avr[10]={0.005,0.01,0.01,0.0125,0.0125,0.025,0.025,0.05,
 unsigned int left,right,middle,flag=0,zd_flag=0,slow,pause=0; //车子在赛道的位置标志
 unsigned int count1,count2,currentspeed,speed_target; 
 unsigned int presteer,currentsteer,dsteer,Angle;
-unsigned char Left_Compensator=17, Right_Compensator=20;
-float Middle_Compensator=15;
+unsigned char Left_Compensator=17, Right_Compensator=17;
+float Middle_Compensator=14;
 float iError,dError;
 unsigned int Uphill=0,Downhill=0,Up_Flag=0,Down_Flag=0,Straight,Ramp_Flag,Ramp_Time=0;
 unsigned int 
-             speed1=410,
-			 speed2=380,
-			 speed3=300,
-			 speed4=240,
-			 speed5=185;
-#define D1 40
-#define D2 40
+     		 speed1=70,
+     		 speed2=62,
+			 speed3=55,
+			 speed4=50,
+			 speed5=40;
+#define D1 35
+#define D2 42
 float
-		kp1=9,kd1=D1,
-		kp2=5.1,kd2=D1,
-		kp3=2.8,kd3=D2,
+		kp1=9.2,kd1=D1,
+		kp2=5.5,kd2=D1,
+		kp3=2.1,kd3=D2,
 		kp4=1.1,kd4=D2;
 
 
@@ -49,9 +49,9 @@ float sumerror,lasterror,Msetpoint=0,temp_middle=0,sensor_compensator=0,middlefl
 int Set_speed,temp_speed,pwm;
 int speed_iError,speed_lastError,speed_prevError,Error[3];
 float 
-      speed_kp=0.6,
-	  speed_ki=0.2,
-	  speed_kd=0.1;
+      speed_kp=4,
+	  speed_ki=1.2,
+	  speed_kd=1;
 
 
 /****************************************************************************************************************
@@ -166,7 +166,7 @@ signed int LocPIDCal(void)
 	{
 		if(dleft<4&&dmiddle<-Middle_Compensator+3&&dright<4)
 		{
-			return(210);
+			return(230);
 			flag=1;
 		}
 			//return(210);
@@ -196,7 +196,7 @@ signed int LocPIDCal(void)
 	{
 		if(dright<4&&dmiddle<-Middle_Compensator+3&&dleft<4)
 		{
-			return(-210);
+			return(-230);
 			flag=2;
 		}
 			//return(-210);
@@ -273,9 +273,9 @@ signed int LocPIDCal(void)
 		kd=kd1;		
 	}
 	temp_steer=kp*iError+kd*dError;
-	if(temp_steer>=210)
+	if(temp_steer>=230)
 		flag=1;               //左打死
-	else if(temp_steer<=-210)
+	else if(temp_steer<=-230)
 		flag=2;
 	else 
 		flag=0;
@@ -298,18 +298,18 @@ void speed_control()
 	Error[1]=Error[0];
 	Error[0]=speed_iError;
 	
-	if(speed_iError>90)
-		temp_speed=180;
-	else if(speed_iError<-110)
-		temp_speed=-180;
+	if(speed_iError>34)
+		temp_speed=130;
+	else if(speed_iError<-30)
+		temp_speed=-170;
 	else
 		temp_speed+=speed_kp*(Error[0]-Error[1])+speed_ki*Error[0]+speed_kd*(Error[0]-Error[1]-(Error[1]-Error[2]));
-	if(temp_speed>180)
-		temp_speed=180;
-	if(temp_speed<-190)
-			temp_speed=-190;
+	if(temp_speed>=150)
+		temp_speed=150;
+	if(temp_speed<=-170)
+			temp_speed=-170;
 	SET_motor(temp_speed);
-	if(forward)
+	if(forward&&StopFlag)
 		SET_motor(0);
 }
 /****************************************************************************************************************
@@ -323,11 +323,11 @@ void speed_control()
 void SpeedSet(void)
 {
 
-	if(forward)
+/*	if(forward)
 	{
 		speed_target=0;
 		return;
-	}
+	}*/
 /*	 if((temp_steer>=181||temp_steer<=-186))
 	{	
 			speed_target=speed5;
@@ -389,7 +389,7 @@ void SpeedSet(void)
     	
     	
     	
-	if((temp_steer>=200||temp_steer<=-210))
+/*	if((temp_steer>=200||temp_steer<=-210))
 		{	
 			speed_target=speed5;
 		}
@@ -397,34 +397,37 @@ void SpeedSet(void)
 	    {
 	    	zd_flag++;
 	    	slow++;
-	//    	if(zd_flag>50)
-	  	    	speed_target = speed1;
-	//    	else
+	    	if(zd_flag>50)
+	    	{
+	    		speed_target = speed1;
+	    		chuwan=0;
+	    	}
+//	    	else
 	//    		speed_target = speed1-40;
 	    		
 	    	pause=0;
 	    } 
 	    else if(temp_steer>-60 && temp_steer<60)
 	    {
-	   	if(zd_flag>200)
-		{
-			speed_target=speed5-60;
-			pause=1;
-		}
-		else if(zd_flag>100)
-		{
-			speed_target=speed4-50;
-			pause=1;
-		}
-		else if(zd_flag>50)
-		{
-			speed_target=speed4;
-			pause=1;
-		}
-		else
-			speed_target = speed2-(abs(temp_steer)-30)/30*(speed2-speed1);
- //   	zd_flag=0;
-		pause=0;
+			if(zd_flag>200)
+			{
+				speed_target=speed5-60;
+				pause=1;
+			}
+			else if(zd_flag>100)
+			{
+				speed_target=speed4-50;
+				pause=1;
+			}
+			else if(zd_flag>50)
+			{
+				speed_target=speed4;
+				pause=1;
+			}
+			else
+				speed_target = speed2-(abs(temp_steer)-30)/30*(speed2-speed1);
+	 //   	zd_flag=0;
+			pause=0;
 	    } 
 	    else if(temp_steer>-100 && temp_steer<100)
 	    {
@@ -466,90 +469,78 @@ void SpeedSet(void)
 	    		slow=0;
 	        speed_target = speed5-(abs(temp_steer)-140)/40*(speed5-speed4);
 	        pause=0;
-	    }  
+	    }  */
 
-	    if(StopFlag==1)
-	    	speed_target=0;
-	    if(Up_Flag==1)
-	    	speed_target=200;
-	    /*
+	  
+	    
 	    	
-	if(abs(iError)<7)
+		if(abs(iError)<7)
 		{
-			if(zd_flag>70)
+			if(zd_flag>350)
 				speed_target=speed1;
 			else
-				speed_target=speed1-30;
+				speed_target=speed1-4;
 			zd_flag++;
 
 		}
-<<<<<<< HEAD
 		else if(abs(iError)<11)
-=======
-		else if(abs(iError)<10)
->>>>>>> master
+
 		{	
-			if(zd_flag>150)
-				speed_target=speed5;
+			if(zd_flag>1000)
+				speed_target=speed5-11;
+			else if(zd_flag>500)
+				speed_target=speed5-8;
+			else if(zd_flag>250)
+				speed_target=speed5-6;
 			else
-<<<<<<< HEAD
 				speed_target=speed1-(speed1-speed2)/4*(abs(iError)-7);
-			zd_flag=0;
-		}
-		else if(abs(iError)<17)
-=======
-				speed_target=speed1-(speed1-speed2)/4*(abs(iError)-6);
-			//zd_flag=0;
 		}
 		else if(abs(iError)<18)
->>>>>>> master
 		{
-		if(zd_flag>150)
-				speed_target=speed4;
+			
+			if(zd_flag>1000)
+				speed_target=speed5-11;
+			else if(zd_flag>500)
+				speed_target=speed5-8;
+			else if(zd_flag>250)
+				speed_target=speed5-6;
 			else
-<<<<<<< HEAD
-				speed_target=speed2-(speed2-speed3)/6*(abs(iError)-11);
+				speed_target=speed2-(speed2-speed3)/7*(abs(iError)-11);
 	 		zd_flag=0;
-=======
-				speed_target=speed2-(speed2-speed3)/8*(abs(iError)-10);
 	 		//zd_flag=0;
->>>>>>> master
 		}
 		else if(abs(iError)<25)
 		{
-			if(zd_flag>200)
+	/*		if(zd_flag>200)
 				speed_target=speed5;
-			else
-<<<<<<< HEAD
-				speed_target=speed3-(speed3-speed4)/8*(abs(iError)-17);
-			zd_flag=0;
-=======
+			else*/
 				speed_target=speed3-(speed3-speed4)/7*(abs(iError)-18);
+			zd_flag=0;
 			//zd_flag=0;
->>>>>>> master
 		}
 		else 
 		{
-			if(zd_flag>250)
+/*			if(zd_flag>250)
 				speed_target=speed5-30;
-			else
+			else*/
 				speed_target=speed4-(speed4-speed5)/10*(abs(iError)-25);
-<<<<<<< HEAD
 			zd_flag=0;
-=======
 			//zd_flag=0;
->>>>>>> master
 		}
 		if(temp_steer>=210||temp_steer<=-210)
 		{
-			if(zd_flag)
+	/*		if(zd_flag)
 				speed_target=speed5-40;
-			else 
+			else */
 				speed_target=speed5;
 			zd_flag=0;
 		}
 		if(speed_target>speed1)
-			speed_target=speed1;*/
+			speed_target=speed1;  
+		if(StopFlag==1)
+	    	speed_target=0;
+	    if(Up_Flag==1)
+	    	speed_target=32;
 }
 /*******************************************************ADC*************************************************************/
 unsigned int ADC_GetValueChannel()
@@ -595,7 +586,7 @@ void sensor_display(void)
 	Dis_Num(0,2,(WORD)start_right,5);
 	Dis_Num(0,1,(WORD)start_middle,5);
 	Dis_Num(0,3,(WORD)STEER_HELM_CENTER,5);
-	Dis_Num(0,4,(WORD)flag,5);
+	Dis_Num(0,4,(WORD)zd_flag,5);
 	Dis_Num(44,0,(WORD)Uphill,2);
 	Dis_Num(44,1,(WORD)Up_Flag,2);
 	Dis_Num(44,2,(WORD)Down_Flag,2);
@@ -657,7 +648,7 @@ void Get_speed()  //定时2mse采速度
 			currentspeed = 0xffff - (-count1 + count2);
 		}
 	if(forward)
-		currentspeed=abs(currentspeed);
+		currentspeed=-currentspeed;
 	count2=count1;
 	//PIT.CH[1].TFLG.B.TIF=1;*/
 }
@@ -672,9 +663,9 @@ void Get_speed()  //定时2mse采速度
 *****************************************************************************************************************/
 void Set_Middlepoint()
 {
-	start_middle=MIDDLE+12;
-	start_left=LEFT+19;
-	start_right=RIGHT+13;
+	start_middle=MIDDLE-2;
+	start_left=LEFT-1;
+	start_right=RIGHT;
 	sensor_compensator=RIGHT-LEFT;
 //	Msetpoint=temp_middle;
 //	Dis_Num(64,6,(WORD)Msetpoint,5);
@@ -829,7 +820,7 @@ void Ramp_Detect()
 				Up_Flag=1;
 			}
 		}
-		if(Up_Flag==1	&&	Down_Flag==0	&&	RIGHT-start_right+dleft+MIDDLE-start_middle<(Frequency_Over-100))
+		if(Up_Flag==1	&&	Down_Flag==0	&&	(RIGHT-start_right+dleft+MIDDLE-start_middle<20))
 			{
 			Uphill=1;
 			Ramp_Flag=1;
