@@ -23,23 +23,23 @@ float sensor[3][10]={0},avr[10]={0.005,0.01,0.01,0.0125,0.0125,0.025,0.025,0.05,
 unsigned int left,right,middle,flag=0,zd_flag=0,slow,pause=0; //车子在赛道的位置标志
 unsigned int count1,count2,currentspeed,speed_target; 
 unsigned int presteer,currentsteer,dsteer,Angle;
-unsigned char Left_Compensator=17, Right_Compensator=17;
-float Middle_Compensator=14;
+unsigned char Left_Compensator=20, Right_Compensator=18;
+float Middle_Compensator=15;
 float iError,dError;
 unsigned int Uphill=0,Downhill=0,Up_Flag=0,Down_Flag=0,Straight,Ramp_Flag,Ramp_Time=0;
 unsigned int 
-     		 speed1=70,
-     		 speed2=62,
-			 speed3=55,
-			 speed4=50,
+     		 speed1=68,
+     		 speed2=60,
+			 speed3=54,
+			 speed4=48,
 			 speed5=40;
-#define D1 35
-#define D2 42
+#define D1 37
+#define D2 44
 float
 		kp1=9.2,kd1=D1,
-		kp2=5.5,kd2=D1,
-		kp3=2.1,kd3=D2,
-		kp4=1.1,kd4=D2;
+		kp2=5.3,kd2=D1,
+		kp3=2.4,kd3=D2,
+		kp4=1.4,kd4=D2;
 
 
 float kp,ki,kd;

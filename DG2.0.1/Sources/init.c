@@ -8,7 +8,7 @@
 
 #include"includes.h"
 
-unsigned int Openloop_Speed=110;
+unsigned int Openloop_Speed=105;
 void initALL(void)
 {
 	disableWatchdog();

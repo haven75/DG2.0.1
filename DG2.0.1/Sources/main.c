@@ -1,9 +1,10 @@
 #include "includes.h"
-unsigned int Flag=0,wait=9,INTC_Time=0;
+unsigned int Flag=0,wait=9,INTC_Time=0,mode_flag=0;
 signed int steer=0,delay_count=0,StartDelay=0;
 void FastSpeedMode();
 void MiddleSpeedMode();
 void SlowSpeedMode();
+void openloopMode();
 
 void main(void)
  {
@@ -16,6 +17,8 @@ void main(void)
 		MiddleSpeedMode();
 	while(switch6==1&&switch5==0)
 		SlowSpeedMode();
+	while(switch6==0&&switch5==0)
+		openloopMode();
 }
 
 
@@ -36,7 +39,7 @@ void Pit0ISR()
 			else Ramp_Detect();
 			if(Ramp_Flag==1)
 				Ramp_Time++;
-			if(Ramp_Time>85)
+			if(Ramp_Time>90)
 				Up_Flag=2;
 			if(Ramp_Flag>100)
 				Ramp_Flag=0;
@@ -48,14 +51,54 @@ void Pit0ISR()
 		INTC_Time=0;
 	}
 	Get_speed();
-	speed_control();
+	if(mode_flag==0)
+		speed_control();
 	PIT.CH[0].TFLG.B.TIF = 1;
 }
-
+void openloopMode()
+{
+#define D1 35
+#define D2 44
+	kp1=9.3,kd1=D1,
+	kp2=5.3,kd2=D1,
+	kp3=2.4,kd3=D2,
+	kp4=1.5,kd4=D2;
+	mode_flag=1;
+	for (;;) 
+		{
+			Key_Detect_Compensator();
+			if(Flag==1)
+			{
+				sensor_display();
+				steer=STEER_HELM_CENTER+LocPIDCal();
+				if(steer<=STEER_HELM_CENTER-230)
+					steer=STEER_HELM_CENTER-235;
+				if(steer>=STEER_HELM_CENTER+230)
+					steer=STEER_HELM_CENTER+213;
+				Dis_Num(64,3,(WORD)steer,4);
+				if(Up_Flag==1)
+					steer=STEER_HELM_CENTER+2;
+				SET_steer(steer);
+				StopLineDetect();
+				if(StartDelay>300)
+				{
+					if(Up_Flag==1)
+						EMIOS_0.CH[9].CBDR.R = Openloop_Speed-10;
+					else
+						EMIOS_0.CH[9].CBDR.R = Openloop_Speed;
+						
+				}
+					//SpeedSet();
+			}
+			Flag=0;
+			Senddata();
+		}
+	
+}
 void FastSpeedMode()
 {
-	speed1=70;
-	speed5=39;
+	speed1=71;
+	speed5=35;
 	for (;;) 
 	{
 		Key_Detect_Compensator();
@@ -69,7 +112,7 @@ void FastSpeedMode()
 				steer=STEER_HELM_CENTER+213;
 			Dis_Num(64,3,(WORD)steer,4);
 			if(Up_Flag==1)
-				steer=STEER_HELM_CENTER+2;
+				steer=STEER_HELM_CENTER;
 			SET_steer(steer);
 			StopLineDetect();
 			if(StartDelay>300)
@@ -82,8 +125,8 @@ void FastSpeedMode()
                    
 void MiddleSpeedMode()
 {
-	speed1=68;
-	speed5=38;
+	speed1=69;
+	speed5=34;
 	for (;;) 
 	{
 		Key_Detect_Compensator();
@@ -97,7 +140,7 @@ void MiddleSpeedMode()
 				steer=STEER_HELM_CENTER+213;
 			Dis_Num(64,3,(WORD)steer,4);
 			if(Up_Flag==1)
-				steer=STEER_HELM_CENTER+2;
+				steer=STEER_HELM_CENTER;
 			SET_steer(steer);
 			StopLineDetect();
 			if(StartDelay>300)
@@ -110,8 +153,8 @@ void MiddleSpeedMode()
 
 void SlowSpeedMode()
 {
-	speed1=66;
-	speed5=37;
+	speed1=68;
+	speed5=33;
 	for (;;) 
 	{
 		Key_Detect_Compensator();
@@ -125,7 +168,7 @@ void SlowSpeedMode()
 				steer=STEER_HELM_CENTER+213;
 			Dis_Num(64,3,(WORD)steer,4);
 			if(Up_Flag==1)
-				steer=STEER_HELM_CENTER+2;
+				steer=STEER_HELM_CENTER;
 			SET_steer(steer);
 			StopLineDetect();
 			if(StartDelay>300)
