@@ -14,7 +14,7 @@
  */
 #include"includes.h"
 #define Hillcont 0
-#define Frequency_Over 80
+#define Frequency_Over 70
 unsigned int chuwan,Hill_count;
 unsigned char StartFlag,StopFlag,RunFlag=2000,Stop=100;
 float fre_diff,dis,LEFT_old,LEFT_new=0,RIGHT_old,RIGHT_new=0,MIDDLE_old,MIDDLE_new=0,temp_steer,temp_steer_old;
@@ -23,7 +23,7 @@ float sensor[3][10]={0},avr[10]={0.005,0.01,0.01,0.0125,0.0125,0.025,0.025,0.05,
 unsigned int left,right,middle,flag=0,zd_flag=0,slow,pause=0; //车子在赛道的位置标志
 unsigned int count1,count2,currentspeed,speed_target; 
 unsigned int presteer,currentsteer,dsteer,Angle;
-unsigned char Left_Compensator=20, Right_Compensator=17;
+unsigned char Left_Compensator=21, Right_Compensator=17;
 float Middle_Compensator=15;
 float iError,dError;
 unsigned int Uphill=0,Downhill=0,Up_Flag=0,Down_Flag=0,Straight,Ramp_Flag,Ramp_Time=0;
@@ -31,7 +31,7 @@ unsigned int
      		 speed1=68,
      		 speed2=62,
 			 speed3=50,
-			 speed4=45,
+			 speed4=44,
 			 speed5=40;
 #define D1 30
 #define D2 35

@@ -188,7 +188,7 @@ void SlowSpeedMode()
 			kp3=2.3,kd3=35,
 			kp4=1.2,kd4=35;
 	speed1=69;
-	speed5=38;
+	speed5=36;
 	for (;;) 
 	{
 		Key_Detect_Compensator();
