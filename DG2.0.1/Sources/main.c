@@ -11,6 +11,8 @@ void main(void)
 	initALL();
 	while(wait>0);
 	Set_Middlepoint();
+	if(switch4)
+		pause=1;
 	while(switch6==1&&switch5==1)
 		FastSpeedMode();
 	while(switch6==0&&switch5==1)
@@ -102,7 +104,7 @@ void openloopMode()
 				StopLineDetect();
 				if(StopFlag)
 					EMIOS_0.CH[9].CBDR.R=0;
-				if(StartDelay>300)
+				if(StartDelay>300||switch4==1)
 				{
 					if(Up_Flag==1)
 						EMIOS_0.CH[9].CBDR.R = Openloop_Speed-6;

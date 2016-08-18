@@ -16,11 +16,11 @@
 #define Hillcont 0
 #define Frequency_Over 70
 unsigned int chuwan,Hill_count;
-unsigned char StartFlag,StopFlag,RunFlag=2000,Stop=100;
+unsigned char StartFlag,StopFlag,RunFlag=2000,Stop=100,pause=0;
 float fre_diff,dis,LEFT_old,LEFT_new=0,RIGHT_old,RIGHT_new=0,MIDDLE_old,MIDDLE_new=0,temp_steer,temp_steer_old;
 float LEFT_Temp,RIGHT_Temp,MIDDLE_Temp,Lsum,Rsum,Msum;
 float sensor[3][10]={0},avr[10]={0.005,0.01,0.01,0.0125,0.0125,0.025,0.025,0.05,0.15,0.7};
-unsigned int left,right,middle,flag=0,zd_flag=0,slow,pause=0; //车子在赛道的位置标志
+unsigned int left,right,middle,flag=0,zd_flag=0,slow; //车子在赛道的位置标志
 unsigned int count1,count2,currentspeed,speed_target; 
 unsigned int presteer,currentsteer,dsteer,Angle;
 unsigned char Left_Compensator=21, Right_Compensator=17;
@@ -537,7 +537,7 @@ void SpeedSet(void)
 		}
 		if(speed_target>speed1)
 			speed_target=speed1;  
-		if(StopFlag==1)
+		if(StopFlag==1||(pause&&StartFlag==1))
 				speed_target=0;
 	    if(Up_Flag==1)
 	    	speed_target=26;
