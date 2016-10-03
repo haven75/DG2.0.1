@@ -8,7 +8,7 @@
 
 #include"includes.h"
 
-unsigned int Openloop_Speed=107;
+unsigned int Openloop_Speed=100;
 void initALL(void)
 {
 	disableWatchdog();
@@ -65,15 +65,15 @@ void disableWatchdog(void)
 //*****************************************************************************************************************
 void initEMIOS_0MotorAndSteer(void)
 {
-  //eMIOS0初始化80MHz分为1MHz
-	EMIOS_0.MCR.B.GPRE= 63;   //GPRE+1=分频系数；/* Divide 80 MHz sysclk by 79+1 = 80 for 1MHz(0.1us) eMIOS clk*/
+  //eMIOS0初始化64MHz分为1MHz
+	EMIOS_0.MCR.B.GPRE= 63;   //GPRE+1=分频系数；/* Divide 64 MHz sysclk by 63+1 = 64 for 1MHz(1us) eMIOS clk*/
 	EMIOS_0.MCR.B.GPREN = 1;	/* Enable eMIOS clock */
 	EMIOS_0.MCR.B.GTBE = 1;   /* Enable global time base */
 	EMIOS_0.MCR.B.FRZ = 1;    /* Enable stopping channels when in debug mode */
 	
   /**********电机PWM 5kHZ A9 A10口*********************************************************************************/ 
  /* Modulus Up Counter 5kHZ */
-	EMIOS_0.CH[8].CCR.B.UCPRE=0;	/* Set channel prescaler to divide by 1+1 */
+	EMIOS_0.CH[8].CCR.B.UCPRE=0;	/* Set channel prescaler to divide by 0+1 */
 	EMIOS_0.CH[8].CCR.B.UCPEN = 1;	/* Enable prescaler; uses default divide by 1 */
 	EMIOS_0.CH[8].CCR.B.FREN = 1;	/* Freeze channel counting when in debug mode */
 	EMIOS_0.CH[8].CADR.R = 200;	/* 设置周期200us 5KHZ */
@@ -100,10 +100,10 @@ void initEMIOS_0MotorAndSteer(void)
 	
   /**********舵机PWM 50HZ A2口输出         20000*7.5%=     中位**********/
     /* Modulus Up Counter 50HZ */
-    EMIOS_0.CH[0].CCR.B.UCPRE=0;	/* Set channel prescaler to divide by 4 */
-	EMIOS_0.CH[0].CCR.B.UCPEN = 1;	/* Enable prescaler; uses default divide by 4 */
+    EMIOS_0.CH[0].CCR.B.UCPRE=0;	/* Set channel prescaler to divide by 1 */
+	EMIOS_0.CH[0].CCR.B.UCPEN = 1;	/* Enable prescaler; uses default divide by 1 */
 	EMIOS_0.CH[0].CCR.B.FREN = 1;	/* Freeze channel counting when in debug mode */
-	EMIOS_0.CH[0].CADR.R = 10000;	/* 设置周期0.02s  50HZ */
+	EMIOS_0.CH[0].CADR.R = 10000;	/* 设置周期10ms  100HZ */
 	EMIOS_0.CH[0].CCR.B.MODE = 0x50;	/* Modulus Counter Buffered (MCB) */
 	EMIOS_0.CH[0].CCR.B.BSL = 0x3;	/* Use internal counter */
     /* 方向舵机 PWM PA2 输出0-50000 */
@@ -155,12 +155,12 @@ void initPIT(void)
 {                                 //PIT02msec中断立controlflag  PIT1速度反馈2ms一个控制周期
                            	       // NOTE:  DIVIDER FROM SYSCLK TO PIT ASSUMES DEFAULT DIVIDE BY 1 
   PIT.PITMCR.R = 0x00000001;       // Enable PIT and configure timers to stop in debug mode 
-  PIT.CH[0].LDVAL.R = 128000;        //PIT0 timeout=160000 sysclks x 1sec/80M sysclks =2msec
+  PIT.CH[0].LDVAL.R = 128000;        //PIT0 timeout=128000 sysclks x 1sec/64M sysclks =2msec
   PIT.CH[0].TCTRL.R = 0X00000003;    //Enable PIT0 interrupt and make PIT active to count 
   
-  PIT.CH[1].LDVAL.R = 800000;      // PIT1 timeout = 800000 sysclks x 1sec/80M sysclks = 10msec 
+  /*PIT.CH[1].LDVAL.R = 800000;      // PIT1 timeout = 800000 sysclks x 1sec/64M sysclks = 10msec 
   PIT.CH[1].TCTRL.R = 0x00000003; // Enable PIT1 interrupt and make PIT active to count 
-  
+   */  
  // PIT.CH[2].LDVAL.R =320000000;    //设置计数值为32000000
  // PIT.CH[2].TCTRL.R = 0x000000003; //使能PIT2计数，并使能中断
   

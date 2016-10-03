@@ -153,12 +153,12 @@ float	kp1=8.5,kd1=30,
                    
 void MiddleSpeedMode()
 {
-float	kp1=8.5,kd1=30,
-		kp2=5,kd2=30,
-		kp3=2.3,kd3=35,
-		kp4=1.2,kd4=35;
-	speed1=72;
-	speed5=38;
+float	kp1=8.15,kd1=32,
+		kp2=5.1,kd2=32,
+		kp3=2.25,kd3=38,
+		kp4=1.25,kd4=38;
+	speed1=70;
+	speed5=36;
 	for (;;) 
 	{
 		Key_Detect_Compensator();
@@ -187,10 +187,10 @@ void SlowSpeedMode()
 {
 	float	kp1=8.2,kd1=30,
 			kp2=5,kd2=30,
-			kp3=2.3,kd3=35,
-			kp4=1.2,kd4=35;
-	speed1=69;
-	speed5=36;
+			kp3=2,kd3=37,
+			kp4=1,kd4=37;
+	speed1=65;
+	speed5=35;
 	for (;;) 
 	{
 		Key_Detect_Compensator();
